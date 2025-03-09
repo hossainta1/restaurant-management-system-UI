@@ -1,4 +1,7 @@
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import { AuthContext } from "../../providers/AuthProvider";
+import { Link } from "react-router-dom";
 
 const SignUp = () => {
   // react hook form
@@ -8,8 +11,16 @@ const SignUp = () => {
     formState: { errors },
   } = useForm();
 
+
+  const { createUser} = useContext(AuthContext);
+
   const onSubmit = (data) => {
     console.log(data);
+    createUser(data.email, data.password)
+    .then(result => {
+      const loggedUser = result.user;
+      console.log(loggedUser);
+    })
   };
 
   // react hook form
@@ -70,9 +81,11 @@ const SignUp = () => {
                 placeholder="Password"
               />
               {errors.password && <span className="text-red-500">{errors.password.message}</span>}
-              <button className="btn btn-neutral mt-4">Sign in</button>
+              <input className="btn btn-neutral mt-4" type="submit" value="Sign Up" />
+              
             </fieldset>
           </form>
+          <p className="mb-12 flex justify-center items-center text-center"><small>Alrady Have an Account? <Link to={'/login'} className="text-violet-500">Please login</Link> </small> </p>
         </div>
       </div>
     </div>
