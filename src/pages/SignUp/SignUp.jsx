@@ -1,18 +1,21 @@
 import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../../providers/AuthProvider";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const SignUp = () => {
   // react hook form
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
 
-  const { createUser} = useContext(AuthContext);
+  const { createUser, updateUserProfile} = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const onSubmit = (data) => {
     console.log(data);
@@ -20,6 +23,19 @@ const SignUp = () => {
     .then(result => {
       const loggedUser = result.user;
       console.log(loggedUser);
+      updateUserProfile(data.name, data.photoURL)
+      .then(() => {
+         console.log("User profile info updated");
+         reset();
+         Swal.fire({
+          title: "User create Successfully.",
+          icon: "success",
+          draggable: true
+        });
+
+        navigate('/');
+      })
+      .catch(error => console.log(error))
     })
   };
 
@@ -39,7 +55,7 @@ const SignUp = () => {
         <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
           <form onSubmit={handleSubmit(onSubmit)} className="card-body">
             <fieldset className="fieldset">
-              <label className="fieldset-label">Name</label>
+            <label className="fieldset-label">Name</label>
               <input
                 type="text"
                 {...register("name", { required: true })}
@@ -48,6 +64,14 @@ const SignUp = () => {
                 placeholder="Name"
               />
               {errors.name && <span className=" text-red-500">Name is required*</span>}
+              <label className="fieldset-label">Photo URL</label>
+              <input
+                type="text"
+                {...register("photo url", { required: true })}
+                className="input"
+                placeholder="Photo url"
+              />
+              {errors.photoURL && <span className=" text-red-500">Photo url is required*</span>}
               <label className="fieldset-label">Email</label>
               <input
                 type="email"
