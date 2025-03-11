@@ -18,7 +18,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || "";
+  const from = location.state?.from?.pathname || "/";
   // use context
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const Login = () => {
           `
         }
       });
-      navigate(from, {replace : true});
+      navigate(from, { replace: true });
     });
   };
 
