@@ -3,9 +3,13 @@ import { NavLink, Outlet } from "react-router-dom";
 import { FaHome, FaSearch, FaShoppingCart } from "react-icons/fa";
 import { SlCalender } from "react-icons/sl";
 import useCart from "../hooks/useCart";
+import { MdContactMail } from "react-icons/md";
 
 const Dashboard = () => {
   const [cart] =useCart();
+  // TODO: get isAdmin from the database
+
+   const isAdmin = true;
   return (
     <div className="flex">
       {/* Dashboard Side bar */}
@@ -43,6 +47,7 @@ const Dashboard = () => {
           </li>
 
           <div className="divider"></div>
+          {/* Shared Nav link */}
           <li>
             <NavLink to="/">
               <FaHome className="mr-2"></FaHome>
@@ -53,6 +58,12 @@ const Dashboard = () => {
             <NavLink to="/order/salad">
               <FaSearch className="mr-2"></FaSearch>
               Menu
+            </NavLink>{" "}
+          </li>
+          <li>
+            <NavLink to="">
+              <MdContactMail className="mr-2"></MdContactMail>
+              Contact us
             </NavLink>{" "}
           </li>
         </ul>
