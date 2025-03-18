@@ -5,16 +5,16 @@ import {
   LoadCanvasTemplate,
   validateCaptcha,
 } from "react-simple-captcha";
-import { AuthContext } from "../../providers/AuthProvider";
 import { Link, replace, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import SocialLogin from "../../components/SocialLogin/SocialLogin";
+import useAuth from "../../hooks/useAuth";
 
 const Login = () => {
   const [disable, setDisable] = useState(true);
 
   // use context
-  const { signIn } = useContext(AuthContext);
+  const { signIn } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();

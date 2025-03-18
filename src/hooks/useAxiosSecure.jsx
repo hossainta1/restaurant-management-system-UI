@@ -3,38 +3,47 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 
 const axiosSecure = axios.create({
-    baseURL : 'http://localhost:5000/'
-})
+    baseURL: 'http://localhost:5000'
+});
+
 const useAxiosSecure = () => {
-
     const navigate = useNavigate();
-     const {logOut} = useAuth();
-    // Request interceptor to add authorized header for secure every api call
-    axiosSecure.interceptors.request.use(function (config) {
-        const token = localStorage.getItem('access-token');
-        // console.log('Request stoped by interceptor', token);
-        config.headers.authorization = `Bearer ${token}`;
-        return config;
-      }, function (error) {
-        return Promise.reject(error);
-      });
+    const { logOut } = useAuth();
 
-    //   interceptor for 401 and 403 status
-    axiosSecure.interceptors.response.use(function(response) {
-        return response;
-    }, async (error) => {
-        const status = error.response.status;
-        // console.log('status error in the interceptor', status);
+    // Request interceptor to add Authorization header
+    axiosSecure.interceptors.request.use(
+        (config) => {
+            const token = localStorage.getItem('access-token');
+            if (token) {
+                config.headers.authorization = `Bearer ${token}`;
+            }
+            return config;
+        },
+        (error) => Promise.reject(error)
+    );
 
-        // for 401 and 403 logout the user and navigate the user login page
-        if(status === 401 || status === 403){
+    // Response interceptor to handle 401 and 403 errors
+    axiosSecure.interceptors.response.use(
+        (response) => response,
+        async (error) => {
+            console.log("Axios Error:", error); // Debugging: Check full error object
 
-            await logOut();
-            navigate('/login')
+            // Ensure error.response exists before accessing status
+            if (error.response) {
+                const status = error.response.status;
+
+                if (status === 401 || status === 403) {
+                    await logOut();
+                    navigate('/login');
+                }
+            } else {
+                console.error("No response received from server:", error);
+            }
+
+            return Promise.reject(error);
         }
-        return Promise.reject(error)
+    );
 
-    })
     return axiosSecure;
 };
 
